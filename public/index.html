@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectrum Calculation Module</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Add Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Spectrum Calculation Module</h1>
+        
+        <div class="form-section">
+            <h2>Configuration</h2>
+            <form id="config-form">
+                <div class="form-group">
+                    <label for="numberOfLines">Number of Lines:</label>
+                    <input type="number" id="numberOfLines" name="numberOfLines" min="100" max="102400" value="1024" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="windowType">Window Type:</label>
+                    <select id="windowType" name="windowType" required>
+                        <option value="Hanning">Hanning</option>
+                        <option value="Rectangular">Rectangular</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="minFrequency">Min Frequency (Hz):</label>
+                    <input type="number" id="minFrequency" name="minFrequency" min="0" value="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="maxFrequency">Max Frequency (Hz):</label>
+                    <input type="number" id="maxFrequency" name="maxFrequency" min="0" value="1000" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="bandRange">Band Range (Hz):</label>
+                    <input type="number" id="bandRange" name="bandRange" min="1" max="100" value="25" required>
+                    <small>(Width of frequency bands, e.g., 25Hz for bands: 0-25, 25-50, etc.)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="highPassFrequency">High Pass Frequency (Hz):</label>
+                    <input type="number" id="highPassFrequency" name="highPassFrequency" min="0" value="0">
+                    <small>(0 = disabled, must be > 0 for integration)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lowPassFrequency">Low Pass Frequency (Hz):</label>
+                    <input type="number" id="lowPassFrequency" name="lowPassFrequency" min="0" value="0">
+                    <small>(0 = disabled)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sampleRate">Sample Rate (Hz):</label>
+                    <input type="number" id="sampleRate" name="sampleRate" min="1" max="131072" value="10000" required>
+                </div>
+            </form>
+        </div>
+        
+        <div class="form-section">
+            <h2>Waveform Generation</h2>
+            <div class="form-group">
+                <label for="waveformType">Waveform Type:</label>
+                <select id="waveformType" name="waveformType">
+                    <option value="sine">Sine Wave</option>
+                    <option value="composite">Composite (50Hz, 100Hz, 150Hz)</option>
+                    <option value="random">Random Noise</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="sineOptions">
+                <label for="frequency">Frequency (Hz):</label>
+                <input type="number" id="frequency" name="frequency" min="1" max="10000" value="50" required>
+                <small class="error-message" id="frequencyError"></small>
+                
+                <label for="amplitude">Amplitude:</label>
+                <input type="number" id="amplitude" name="amplitude" min="0.1" max="10" value="1" step="0.1" required>
+                <small class="error-message" id="amplitudeError"></small>
+            </div>
+            
+            <div class="form-group" id="compositeOptions" style="display: none;">
+                <div class="composite-wave">
+                    <label for="freq1">Frequency 1 (Hz):</label>
+                    <input type="number" id="freq1" name="freq1" min="1" max="10000" value="50" required>
+                    <label for="amp1">Amplitude 1:</label>
+                    <input type="number" id="amp1" name="amp1" min="0.1" max="10" value="1" step="0.1" required>
+                </div>
+                
+                <div class="composite-wave">
+                    <label for="freq2">Frequency 2 (Hz):</label>
+                    <input type="number" id="freq2" name="freq2" min="1" max="10000" value="100" required>
+                    <label for="amp2">Amplitude 2:</label>
+                    <input type="number" id="amp2" name="amp2" min="0.1" max="10" value="0.5" step="0.1" required>
+                </div>
+                
+                <div class="composite-wave">
+                    <label for="freq3">Frequency 3 (Hz):</label>
+                    <input type="number" id="freq3" name="freq3" min="1" max="10000" value="150" required>
+                    <label for="amp3">Amplitude 3:</label>
+                    <input type="number" id="amp3" name="amp3" min="0.1" max="10" value="0.3" step="0.1" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="duration">Duration (seconds):</label>
+                <input type="number" id="duration" name="duration" min="0.1" max="300" value="1" step="0.1">
+            </div>
+            
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <select id="quantity" name="quantity">
+                    <option value="Acceleration">Acceleration</option>
+                    <option value="Velocity">Velocity</option>
+                    <option value="Displacement">Displacement</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Integration:</label>
+                <input type="checkbox" id="integrate" name="integrate">
+                <label for="integrate">Integrate results</label>
+            </div>
+            
+            <button type="button" id="generateBtn">Generate & Calculate</button>
+        </div>
+        
+        <!-- Add visualization section -->
+        <div class="charts-section">
+            <h2>Spectrum Visualization</h2>
+            <div class="chart-container">
+                <canvas id="spectrumChart"></canvas>
+            </div>
+            <div class="chart-container" id="integratedChartContainer" style="display: none;">
+                <h3>Integrated Spectrum</h3>
+                <canvas id="integratedSpectrumChart"></canvas>
+            </div>
+            <div class="chart-controls">
+                <button id="exportSpectrumBtn" class="chart-btn">View Spectrum Data</button>
+                <button id="exportIntegratedBtn" class="chart-btn" style="display: none;">View Integrated Data</button>
+            </div>
+        </div>
+        
+        <div class="results-section">
+            <h2>Results</h2>
+            <div class="output-container">
+                <div class="output-group">
+                    <h3>Result</h3>
+                    <textarea id="resultOutput" readonly></textarea>
+                </div>
+                <div class="output-group">
+                    <h3>Error</h3>
+                    <textarea id="errorOutput" readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="client.js"></script>
+</body>
+</html> 

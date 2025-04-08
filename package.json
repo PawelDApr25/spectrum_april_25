@@ -1,0 +1,31 @@
+{
+  "name": "spectrum-calculation-ts",
+  "version": "1.0.0",
+  "description": "TypeScript implementation of SpectrumCalculationModule",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "fft.js": "^4.0.4",
+    "date-fns": "^2.30.0",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "@types/jest": "^29.5.0",
+    "@types/express": "^4.17.17",
+    "@types/multer": "^1.4.7",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4",
+    "supertest": "^6.3.3",
+    "@types/supertest": "^2.0.12"
+  }
+} 

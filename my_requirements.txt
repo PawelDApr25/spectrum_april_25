@@ -1,0 +1,30 @@
+Requirements:
+1) possible integration:
+- acceleration to velocity
+- velocity to displacement
+2) differentiation and double integration is not allowed
+3) calculateSpectrum()
+    a) should return invalid results when:
+    - one of the input spectrum parameter is not set
+    - integration is not allowed
+    - sample rate in time waveform is not at least 2.56 higher than maximum frequency in spectrum
+    b) in case of number of samples in time waveform is not power of two, then do zero padding to the nearest power of two higher, than time waveform size
+    c) should return only number of lines elements
+    d) filtering should be done in frequency domain, just by cutting unnecessary frequencies
+    e) integration can be done only in case, that high pass filter is used
+    f) high need to be smaller than low pass
+    g) for frequencies lower than minimum frequency 0 are set
+4) integration need to be done in frequency domain by dividing each bin by 2*pi*frequency 
+5) peak in band is defined as maximum value in spectrum band
+6) trends stands for collection of peak in band values against time
+7) spectrum results can be stored for further post processing
+8) speed can be calculated for spectrum with given timestamp
+- speed can be determined from spectrum by taking frequency for bin which is twice higher than average of all peaks. If there is no such peak, then return invalid results
+9) number of lines is up to 102400
+10) maximum spectrum calculation time is 100 ms
+11) maximum sample rate is 131072 Hz
+12) maximum time waveform length is 5 minutes with maximum sample rate
+13) cannot set negative frequencies
+14) cannot set less than 100 number of lines
+15) setting high pass or low pass frequency to 0, means no filtering on this side, particularly when high pass is set to 0, integration is not allowed
+16) maximum tolerance for peak in band from spectrum is 0.01
